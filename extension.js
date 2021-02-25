@@ -283,7 +283,7 @@ let MiniviewClone = GObject.registerClass({
 
     _onMouseEnter(actor, event) {
         // decrease opacity a little bit
-        this.opacity = Math.trunc(this.user_opacity * 0.8);
+        this.opacity = Math.trunc(this.user_opacity * 0.5);
     }
 
     _onMouseLeave(actor, event) {
