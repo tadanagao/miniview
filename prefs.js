@@ -1,5 +1,4 @@
-/* exported init, buildPrefsWidget */
-const { GnomeDesktop, GObject, Gtk } = imports.gi;
+const { GObject, Gtk } = imports.gi;
 
 const ExtensionUtils = imports.misc.extensionUtils;
 
@@ -12,7 +11,10 @@ class MiniviewPrefsWidget extends Gtk.Box {
         super._init({
             orientation: Gtk.Orientation.VERTICAL,
             spacing: 10,
-            margin: 50
+            margin_top: 50,
+            margin_bottom: 50,
+            margin_start: 50,
+            margin_end: 50
         });
 
         // settings
@@ -37,8 +39,11 @@ class MiniviewPrefsWidget extends Gtk.Box {
         this._treeview = new Gtk.TreeView({
             vexpand: false,
             hexpand: true,
-            margin: 10,
-            model: this._model
+            model: this._model,
+            margin_top: 10,
+            margin_bottom: 10,
+            margin_start: 10,
+            margin_end: 10
         });
 
         // keybinding name
@@ -83,9 +88,9 @@ class MiniviewPrefsWidget extends Gtk.Box {
         });
 
         // layout
-        this._frame.add(this._treeview);
-        this.add(this._frame);
-        this.add(this._indicator);
+        this._frame.set_child(this._treeview);
+        this.append(this._frame);
+        this.append(this._indicator);
 
         // set up keybindings
         this._toggleRow = this._appendHotkey('toggle-miniview', _('Toggle Miniview'));
@@ -94,7 +99,7 @@ class MiniviewPrefsWidget extends Gtk.Box {
         this._settings.connect('changed', (setobj, action) => {
             if (action == 'toggle-miniview') {
                 let accel = this._settings.get_string(action);
-                let [key, mods] = Gtk.accelerator_parse(accel);
+                let [ok, key, mods] = Gtk.accelerator_parse(accel);
                 let row = this._toggleRow;
                 this._model.set(row, [ 2, 3 ], [ mods, key ]);
             } else if (action == 'showind') {
@@ -106,8 +111,8 @@ class MiniviewPrefsWidget extends Gtk.Box {
 
     _appendHotkey(name, pretty_name) {
         let accel = this._settings.get_strv(name)[0];
-        let [key, mods] = Gtk.accelerator_parse(accel);
-        let row = this._model.insert(10);
+        let [ok, key, mods] = Gtk.accelerator_parse(accel);
+        let row = this._model.append();
         this._model.set(row, [0, 1, 2, 3], [name, pretty_name, mods, key ]);
         return row;
     }
@@ -127,6 +132,6 @@ function init() {
 
 function buildPrefsWidget() {
     let widget = new MiniviewPrefsWidget();
-    widget.show_all();
+    widget.show();
     return widget;
 }
